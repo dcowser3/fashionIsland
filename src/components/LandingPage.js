@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Grid, Button, Box } from '@mui/material';
+import { Container, Typography, Grid, Button, Box, Dialog, DialogTitle, DialogContent } from '@mui/material';
 
 function LandingPage() {
     const navigate = useNavigate();
-    const clothingTypes = ['Shirt', 'Pants', 'Dress', 'Jacket', 'Shoes', 'Accessories'];
+    const [openDialog, setOpenDialog] = useState(false);
+    const clothingTypes = ['Shirt', 'Bottoms', 'Dress', 'Jacket', 'Shoes', 'Accessories'];
+    const bottomSubtypes = ['shorts', 'skirts', 'jeans'];
 
     const handleClick = (type) => {
-        navigate(`/clothing/${type.toLowerCase()}`);
+        if (type.toLowerCase() === 'bottoms') {
+            setOpenDialog(true);
+        } else {
+            navigate(`/clothing/${type.toLowerCase()}`);
+        }
+    }
+
+    const handleSubtypeClick = (subtype) => {
+        setOpenDialog(false);
+        navigate(`/clothing/bottoms?subtype=${subtype}`);
     }
 
     return (
@@ -25,6 +36,26 @@ function LandingPage() {
                     ))}
                 </Grid>
             </Box>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Choose Bottom Type</DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={2} sx={{ p: 2 }}>
+                        {bottomSubtypes.map((subtype) => (
+                            <Grid item key={subtype}>
+                                <Button 
+                                    variant="outlined" 
+                                    color="primary" 
+                                    onClick={() => handleSubtypeClick(subtype)}
+                                    sx={{ textTransform: 'capitalize' }}
+                                >
+                                    {subtype}
+                                </Button>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </DialogContent>
+            </Dialog>
         </Container>
     );
 }
